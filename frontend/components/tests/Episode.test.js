@@ -1,10 +1,9 @@
-// 👇 YOUR WORK STARTS ON LINE 28
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Episode from "../Episode"
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Episode from "../Episode";
 
-// ❗ EXAMPLE EPISODE TEST OBJECT ❗
+// Example episode data
 const exampleEpisodeData = {
   airdate: "2016-07-15",
   airstamp: "2016-07-15T12:00:00+00:00",
@@ -16,39 +15,42 @@ const exampleEpisodeData = {
   rating: { average: 8.2 },
   runtime: 49,
   season: 1,
-  summary: "A young boy mysteriously disappears, and his panicked mother \
-demands that the police find him. Meanwhile, the boy's friends conduct \
-their own search, and meet a mysterious girl in the forest.",
+  summary: "A young boy mysteriously disappears, and his panicked mother demands that the police find him. Meanwhile, the boy's friends conduct their own search, and meet a mysterious girl in the forest.",
   type: "regular",
   url: "https://www.tvmaze.com/episodes/553946/stranger-things-1x01-chapter-one-the-vanishing-of-will-byers",
 }
 
 describe('Episode component', () => {
   test("renders without error", () => {
-    // 👉 TASK: render the component passing episode data
+    // Render the component passing episode data
+    render(<Episode episode={exampleEpisodeData} />);
+    
+    // Print the simulated DOM
+    screen.debug();
+  });
 
-    // 👉 TASK: print the simulated DOM using screen.debug
-
-  })
   test("renders texts and alt texts correctly", () => {
-    // 👉 TASK: render the component passing episode data and getting the rerender utility
+    // Render the component passing episode data and getting the rerender utility
+    const { rerender } = render(<Episode episode={exampleEpisodeData} />);
 
-    // 👉 TASK: check that the summary renders to the DOM
+    // Check that the summary renders to the DOM
+    expect(screen.getByText(exampleEpisodeData.summary)).toBeInTheDocument();
 
-    // 👉 TASK: check that the alt text "episode image" is present
+    // Check that the alt text for the image is present
+    const image = screen.getByAltText('episode image');
+    expect(image).toBeInTheDocument();
 
-    // 👉 TASK: rerender the component passing episode data lacking an image
-    // ❗ Study the Episode component to understand what happens in this case
+    // Rerender the component passing episode data lacking an image
+    rerender(<Episode episode={{ ...exampleEpisodeData, image: undefined }} />);
+    
+    // Check that the default image appears in the DOM
+    const defaultImage = screen.getByAltText('generic episode image');
+    expect(defaultImage).toBeInTheDocument();
 
-    // 👉 TASK: check that the default image appears in the DOM
-    // ❗ Use querySelector to select the image by its src attribute
+    // Rerender the component passing an undefined episode
+    rerender(<Episode episode={undefined} />);
 
-    // 👉 TASK: check that the "generic episode image" alt text is present
-
-    // 👉 TASK: rerender the component passing an undefined episode
-    // ❗ Study the Episode component to understand what happens in this case
-
-    // 👉 TASK: check that the "Loading episode..." text is present
-
-  })
-})
+    // Check that the "Loading episode..." text is present
+    expect(screen.getByText('Loading episode...')).toBeInTheDocument();
+  });
+});
